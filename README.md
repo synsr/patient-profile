@@ -32,7 +32,6 @@ A Next.js application for displaying patient information, events, and medical no
   - Benefits:
     - Better performance through server-side rendering
     - Reduced client-side JavaScript
-    - Improved SEO
     - Clear separation of concerns
 
 ### 3. UI/UX Considerations
