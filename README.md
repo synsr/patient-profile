@@ -1,36 +1,142 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Patient Profile Application
+
+A Next.js application for displaying patient information, events, and medical notes.
+
+## Assumptions
+
+- Single page application with no navigation
+- All data can be loaded upfront (no pagination)
+- Mock data structure will be updated to reflect changes
+- No authentication required
+- Mobile-first responsive design
+
+## Architecture & Design Decisions
+
+### 1. Data Layer
+
+- **Single Data Fetching Hook**: Using a single `usePatientData` hook instead of multiple hooks to:
+  - Prevent race conditions
+  - Ensure data consistency
+  - Reduce network requests
+  - Simplify state management
+- **Mock API Structure**:
+  - Organized under `src/lib/api/mock/` to clearly separate mock data from real API implementations
+  - Simulated network delays for realistic testing
+  - Type-safe API responses
+
+### 2. Component Architecture
+
+- **Server vs Client Components**:
+  - Only `PatientProfile` is a client component (uses React Query)
+  - Other components (`PatientHeader`, `EventsList`, `NotesList`, `PatientSkeleton`) are server components
+  - Benefits:
+    - Better performance through server-side rendering
+    - Reduced client-side JavaScript
+    - Improved SEO
+    - Clear separation of concerns
+
+### 3. UI/UX Considerations
+
+- **Loading States**:
+  - Skeleton loading for initial data fetch
+  - Smooth transitions between states
+- **Error Handling**:
+  - Graceful error states
+  - User-friendly error messages
+- **Responsive Design**:
+  - Mobile-first approach
+  - Grid layout for larger screens
+  - Consistent spacing and typography
+
+### 4. Performance Optimizations
+
+- **Data Fetching**:
+  - Parallel data fetching with `Promise.all`
+  - React Query for efficient caching
+  - No unnecessary re-renders
+- **Component Structure**:
+  - Minimal client-side JavaScript
+  - Server-side rendering where possible
+  - Efficient prop drilling
+
+### 5. Type Safety
+
+- Comprehensive TypeScript types for:
+  - API responses
+  - Component props
+  - Event handlers
+- Strict type checking for better development experience
+
+## Project Structure
+
+```
+src/
+├── app/
+│   └── patients/
+│       └── [id]/
+│           └── page.tsx
+├── components/
+│   ├── PatientProfile.tsx
+│   ├── PatientHeader.tsx
+│   ├── EventsList.tsx
+│   ├── NotesList.tsx
+│   └── PatientSkeleton.tsx
+└── lib/
+    ├── api/
+    │   ├── mock/
+    │   │   ├── patient.json
+    │   │   ├── events.json
+    │   │   └── doctors_notes.json
+    │   └── mockData.ts
+    └── types/
+        └── index.ts
+```
+
+## Future Improvements
+
+1. **Data Layer**:
+
+   - Add proper error boundaries
+   - Implement retry logic for failed requests
+   - Add data validation
+
+2. **UI/UX**:
+
+   - Add notes creation functionality
+   - Implement search and filtering
+   - Add pagination for events and notes
+
+3. **Performance**:
+
+   - Implement proper caching strategies
+   - Add performance monitoring
+   - Optimize bundle size
+
+4. **Testing**:
+   - Add unit tests
+   - Add integration tests
+   - Add E2E tests
 
 ## Getting Started
 
-First, run the development server:
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Technologies Used
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Next.js 13+ (App Router)
+- TypeScript
+- Tailwind CSS
+- React Query
+- TanStack Query
