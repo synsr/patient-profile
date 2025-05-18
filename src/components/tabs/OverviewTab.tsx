@@ -1,4 +1,4 @@
-import { usePatientData } from '@/lib/api/mockData';
+import { usePatientData, usePatientNotes } from '@/lib/api/mockData';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
 import { PatientHeader } from '@/components/PatientHeader';
@@ -6,12 +6,13 @@ import { Badge } from '@/components/ui/badge';
 
 export function OverviewTab({ id }: { id: string }) {
   const { data, isLoading, error } = usePatientData(id);
+  const { data: notesData } = usePatientNotes(id);
 
   if (isLoading) return <Skeleton className='h-96 w-full' />;
   if (error || !data) return <div>Error loading patient data</div>;
 
-  const { patient, notes, events } = data;
-  const latestNote = notes.data[0];
+  const { patient, events } = data;
+  const latestNote = notesData?.data[0];
   const latestEvent = events[0];
 
   return (

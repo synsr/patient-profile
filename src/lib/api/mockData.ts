@@ -40,17 +40,19 @@ export function usePatientData(id: string) {
   return useQuery({
     queryKey: ['patient-data', id],
     queryFn: async () => {
-      const [patient, events, notes] = await Promise.all([
-        getPatientData(id),
-        getPatientEvents(id),
-        getPatientNotes(id),
-      ]);
+      const [patient, events] = await Promise.all([getPatientData(id), getPatientEvents(id)]);
 
       return {
         patient,
         events,
-        notes,
       };
     },
+  });
+}
+
+export function usePatientNotes(id: string) {
+  return useQuery({
+    queryKey: ['patient-notes', id],
+    queryFn: () => getPatientNotes(id),
   });
 }
