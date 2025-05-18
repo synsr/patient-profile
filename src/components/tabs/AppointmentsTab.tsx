@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Calendar, Clock, MapPin, User, Users, Video } from 'lucide-react';
+import { Calendar, Clock, MapPin, User, Users, Video, CheckCircle } from 'lucide-react';
 
 export function AppointmentsTab({ id }: { id: string }) {
   const { data: events, isLoading, error } = usePatientEvents(id);
@@ -51,7 +51,6 @@ export function AppointmentsTab({ id }: { id: string }) {
       {/* Actions Section */}
       <div className='flex gap-4'>
         <Button>Schedule New Appointment</Button>
-        {upcomingAppointments.length > 0 && <Button variant='secondary'>Check-in Patient</Button>}
       </div>
 
       {/* Upcoming Appointments */}
@@ -132,6 +131,10 @@ export function AppointmentsTab({ id }: { id: string }) {
                     </div>
                   </div>
                   <div className='flex gap-2'>
+                    <Button variant='default' size='sm'>
+                      <CheckCircle className='w-4 h-4 mr-2' />
+                      Check-in
+                    </Button>
                     <Button variant='outline' size='sm'>
                       Reschedule
                     </Button>
