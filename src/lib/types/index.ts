@@ -135,3 +135,106 @@ export interface DoctorsNotesResponse {
   data: DoctorsNote[];
   total: number;
 }
+
+export interface PaymentMethod {
+  id: string;
+  patientId: string;
+  brand: string | null;
+  last4: string | null;
+  expMonth: number | null;
+  expYear: number | null;
+  accountHolderType: string | null;
+  accountNumberLast4: number | null;
+  bankName: string | null;
+  routingNumber: number | null;
+  description: string;
+  type: 'CARD' | 'BANK_ACCOUNT';
+  isDefault: boolean;
+}
+
+export interface Refund {
+  id: string;
+  amount: number;
+  createdDate: string;
+  reason?: string;
+}
+
+export interface Payment {
+  id: string;
+  amount: number;
+  createdDate: string;
+  paymentMethod: PaymentMethod;
+  paymentMedium: 'CARD' | 'CASH' | 'CHECK' | 'INSURANCE';
+  refunds: Refund[];
+}
+
+export interface Adjustment {
+  id: string;
+  chargeId: string;
+  amount: number;
+  type: 'DISCOUNT' | 'WRITE_OFF' | 'ADJUSTMENT';
+  description: string;
+  createdDate: string;
+}
+
+export interface Item {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  active: boolean;
+  createdDate: string;
+  category: string;
+}
+
+export interface ChargeItem {
+  item_id: string;
+  charge_id: string;
+  quantity: number;
+  item: Item;
+}
+
+export interface PlannedPayment {
+  id: string;
+  amount: number;
+  paymentDate: string;
+  status: 'SCHEDULED' | 'COMPLETED' | 'CANCELLED';
+}
+
+export interface Charge {
+  id: string;
+  total: number;
+  totalOutstanding: number;
+  description: string;
+  status: 'PARTIALLY_PAID' | 'PAID' | 'UNPAID';
+  patient: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    email: string;
+    address: string;
+    city: string;
+    state: string;
+    zipCode: string;
+  };
+  createdDate: string;
+  creator: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+  adjustments: Adjustment[];
+  payments: Payment[];
+  plannedPayments: PlannedPayment[];
+  comment: string | null;
+  items: ChargeItem[];
+  locationId: string | null;
+  locationName: string | null;
+}
+
+export interface ChargesResponse {
+  data: Charge[];
+  total: number;
+}

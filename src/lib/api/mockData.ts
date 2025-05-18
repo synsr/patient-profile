@@ -1,7 +1,18 @@
 import patientData from './mock/patient.json';
 import eventsData from './mock/events.json';
 import doctorsNotesData from './mock/doctors_notes.json';
-import type { Patient, Event, DoctorsNotesResponse } from '../types';
+import chargesData from './mock/charges.json';
+import paymentMethodsData from './mock/payment_methods.json';
+import type {
+  Patient,
+  Event,
+  DoctorsNotesResponse,
+  ChargesResponse,
+  Attendee,
+  DoctorsNote,
+  Charge,
+  PaymentMethod,
+} from '../types';
 import { useQuery } from '@tanstack/react-query';
 
 // Simulating API delay
@@ -23,7 +34,7 @@ export const getPatientEvents = async (id: string): Promise<Event[]> => {
 
   // Filter events for this patient
   const filteredEvents = (eventsData as Event[]).filter((event) =>
-    event.attendees.some((attendee) => attendee.user.id === id)
+    event.attendees.some((attendee: Attendee) => attendee.user.id === id)
   );
 
   console.log('Filtered events:', filteredEvents);
@@ -34,12 +45,29 @@ export const getPatientNotes = async (id: string): Promise<DoctorsNotesResponse>
   await delay(500);
   // Filter notes for this patient
   const filteredNotes = (doctorsNotesData as DoctorsNotesResponse).data.filter(
-    (note) => note.patient.id === id
+    (note: DoctorsNote) => note.patient.id === id
   );
   return {
     data: filteredNotes,
     total: filteredNotes.length,
   };
+};
+
+export const getPatientCharges = async (id: string): Promise<ChargesResponse> => {
+  await delay(500);
+  // Filter charges for this patient
+  const filteredCharges = (chargesData as ChargesResponse).data.filter(
+    (charge: Charge) => charge.patient.id === id
+  );
+  return {
+    data: filteredCharges,
+    total: filteredCharges.length,
+  };
+};
+
+export const getPatientPaymentMethods = async (id: string): Promise<PaymentMethod[]> => {
+  await delay(500);
+  return (paymentMethodsData as PaymentMethod[]).filter((method) => method.patientId === id);
 };
 
 export function usePatientData(id: string) {
@@ -67,5 +95,21 @@ export function usePatientEvents(id: string) {
   return useQuery({
     queryKey: ['patient-events', id],
     queryFn: () => getPatientEvents(id),
+  });
+}
+
+export function usePatientCharges(id: string) {
+  return useQuery({
+    queryKey: ['patient-charges', id],
+    queryFn: async () => {
+      const [charges, paymentMethods] = await Promise.all([
+        getPatientCharges(id),
+        getPatientPaymentMethods(id),
+      ]);
+      return {
+        ...charges,
+        paymentMethods,
+      };
+    },
   });
 }
