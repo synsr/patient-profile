@@ -4,6 +4,7 @@ interface PatientPageProps {
   params: { id: string };
 }
 
-export default function PatientPage({ params }: PatientPageProps) {
-  return <PatientPageClient id={params.id} />;
+export default async function PatientPage({ params }: PatientPageProps) {
+  const { id } = await params;
+  return <PatientPageClient id={id} />;
 }
