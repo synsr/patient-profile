@@ -18,10 +18,16 @@ export const getPatientData = async (id: string): Promise<Patient> => {
 
 export const getPatientEvents = async (id: string): Promise<Event[]> => {
   await delay(500);
+  console.log('Fetching events for patient:', id);
+  console.log('All events data:', eventsData);
+
   // Filter events for this patient
-  return (eventsData as Event[]).filter((event) =>
+  const filteredEvents = (eventsData as Event[]).filter((event) =>
     event.attendees.some((attendee) => attendee.user.id === id)
   );
+
+  console.log('Filtered events:', filteredEvents);
+  return filteredEvents;
 };
 
 export const getPatientNotes = async (id: string): Promise<DoctorsNotesResponse> => {
@@ -54,5 +60,12 @@ export function usePatientNotes(id: string) {
   return useQuery({
     queryKey: ['patient-notes', id],
     queryFn: () => getPatientNotes(id),
+  });
+}
+
+export function usePatientEvents(id: string) {
+  return useQuery({
+    queryKey: ['patient-events', id],
+    queryFn: () => getPatientEvents(id),
   });
 }

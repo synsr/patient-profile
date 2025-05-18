@@ -9,6 +9,8 @@ A Next.js application for displaying patient information, events, and medical no
 - All data can be loaded upfront (no pagination)
 - Mock data structure will be updated to reflect changes
 - No authentication required
+- API returns data in the correct order (e.g., clinical notes are returned newest first)
+- No client-side sorting is needed as the API handles data ordering
 
 ## Design Decisions
 
