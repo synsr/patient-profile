@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getPatientData } from '@/lib/api/mockData';
-import { Card } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 export default async function HomePage() {
   // In a real app, this would fetch multiple patients
@@ -12,21 +13,19 @@ export default async function HomePage() {
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
         <Link href={`/patients/${patient.id}`}>
           <Card className='hover:shadow-lg transition-shadow duration-200'>
-            <div className='space-y-2'>
-              <h2 className='text-xl font-semibold text-gray-900'>
-                {patient.firstName} {patient.lastName}
-              </h2>
-              <p className='text-gray-600'>{patient.email}</p>
-              <p className='text-gray-600'>{patient.phoneNumber}</p>
-              <div className='pt-2'>
-                <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800'>
-                  {patient.gender}
-                </span>
-                <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 ml-2'>
-                  {patient.employmentStatus}
-                </span>
+            <CardContent>
+              <div className='space-y-2'>
+                <h2 className='text-xl font-semibold text-gray-900'>
+                  {patient.firstName} {patient.lastName}
+                </h2>
+                <p className='text-gray-600'>{patient.email}</p>
+                <p className='text-gray-600'>{patient.phoneNumber}</p>
+                <div className='pt-2 flex gap-2'>
+                  <Badge variant='secondary'>{patient.gender}</Badge>
+                  <Badge variant='outline'>{patient.employmentStatus}</Badge>
+                </div>
               </div>
-            </div>
+            </CardContent>
           </Card>
         </Link>
       </div>

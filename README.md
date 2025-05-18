@@ -4,11 +4,40 @@ A Next.js application for displaying patient information, events, and medical no
 
 ## Assumptions
 
+- Desktop-first design (primary users are doctors and front desk staff)
 - Single page application with no navigation
 - All data can be loaded upfront (no pagination)
 - Mock data structure will be updated to reflect changes
 - No authentication required
-- Mobile-first responsive design
+
+## Design Decisions
+
+### Information Architecture
+
+- **Critical Information First**: Patient's current status, active alerts, and upcoming events are immediately visible
+- **Hierarchical Layout**:
+  - Top: Patient identity, current status, and active alerts
+  - Middle: Recent events and notes (last 7 days)
+  - Bottom: Historical data and detailed records
+- **Data Prioritization**:
+  - Active alerts and critical information are highlighted
+  - Recent events and notes are easily scannable
+  - Historical data is accessible but not prominent
+
+### UI/UX Approach
+
+- **Desktop-Optimized Layout**:
+  - Multi-column design for efficient space utilization
+  - Sidebar for quick navigation between sections
+  - Fixed header with critical patient information
+- **Visual Hierarchy**:
+  - Clear typography scale for different information levels
+  - Color coding for alerts and status indicators
+  - Consistent spacing and alignment
+- **Interactive Elements**:
+  - Expandable sections for detailed information
+  - Quick filters for events and notes
+  - Hover states for additional context
 
 ## Architecture & Design Decisions
 
