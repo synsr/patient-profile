@@ -20,18 +20,18 @@ import { Event, DoctorsNote, Memo } from '@/lib/types';
 import { StatusBadge, AIGeneratedBadge } from '@/components/badges';
 
 const EVENT_ICONS = {
-  APPOINTMENT: <Calendar className='w-5 h-5 text-blue-600' />,
-  NOTE: <FileText className='w-5 h-5 text-purple-600' />,
-  MEMO: <MessageSquare className='w-5 h-5 text-green-600' />,
+  APPOINTMENT: Calendar,
+  NOTE: FileText,
+  MEMO: MessageSquare,
 } as const;
 
 const METADATA_ICONS = {
-  providers: <Stethoscope className='w-3 h-3' />,
-  duration: <Clock className='w-3 h-3' />,
-  aiGenerated: <AlertTriangle className='w-3 h-3' />,
-  creator: <MessageSquare className='w-3 h-3' />,
-  location: <MapPin className='w-3 h-3' />,
-  appointmentType: <User className='w-3 h-3' />,
+  providers: Stethoscope,
+  duration: Clock,
+  aiGenerated: AlertTriangle,
+  creator: MessageSquare,
+  location: MapPin,
+  appointmentType: User,
 } as const;
 
 type TimelineEvent = {
@@ -65,7 +65,7 @@ function extractKeyEvents(events: Event[], notes: DoctorsNote[], memos: Memo[]):
         title: event.title,
         description: event.appointment.reason,
         date: event.start,
-        icon: EVENT_ICONS.APPOINTMENT,
+        icon: <EVENT_ICONS.APPOINTMENT className='w-5 h-5 text-blue-600' />,
         status: event.status,
         metadata: {
           appointmentType: event.appointment.appointmentType,
@@ -85,10 +85,10 @@ function extractKeyEvents(events: Event[], notes: DoctorsNote[], memos: Memo[]):
           title: 'Clinical Note',
           description: associatedNote.summary,
           date: associatedNote.createdDate,
-          icon: EVENT_ICONS.NOTE,
+          icon: <EVENT_ICONS.NOTE className='w-5 h-5 text-purple-600' />,
           metadata: {
             providers: associatedNote.providerNames,
-            duration: associatedNote.duration ? `${associatedNote.duration / 60} min` : 'N/A',
+            duration: associatedNote.duration ? `${associatedNote.duration / 60} min` : undefined,
             aiGenerated: associatedNote.aiGenerated,
           },
         });
@@ -110,7 +110,7 @@ function extractKeyEvents(events: Event[], notes: DoctorsNote[], memos: Memo[]):
         title: 'Note Added',
         description: memo.note,
         date: memo.createdDate,
-        icon: EVENT_ICONS.MEMO,
+        icon: <EVENT_ICONS.MEMO className='w-5 h-5 text-green-600' />,
         metadata: {
           creator: `${memo.creator.firstName} ${memo.creator.lastName}`,
         },
@@ -182,40 +182,44 @@ export function TimelineTab({ id }: { id: string }) {
                 {/* Metadata */}
                 {event.metadata && (
                   <div className='flex flex-wrap gap-2'>
-                    {Object.entries(event.metadata).map(([key, value]) => (
-                      <Badge key={key} variant='outline' className='text-xs'>
-                        {key === 'providers' && Array.isArray(value) ? (
-                          <div className='flex items-center gap-1'>
-                            {METADATA_ICONS.providers}
-                            {value.join(', ')}
-                          </div>
-                        ) : key === 'duration' ? (
-                          <div className='flex items-center gap-1'>
-                            {METADATA_ICONS.duration}
-                            {value}
-                          </div>
-                        ) : key === 'aiGenerated' && value ? (
-                          <AIGeneratedBadge />
-                        ) : key === 'creator' ? (
-                          <div className='flex items-center gap-1'>
-                            {METADATA_ICONS.creator}
-                            {value}
-                          </div>
-                        ) : key === 'location' ? (
-                          <div className='flex items-center gap-1'>
-                            {METADATA_ICONS.location}
-                            {value}
-                          </div>
-                        ) : key === 'appointmentType' ? (
-                          <div className='flex items-center gap-1'>
-                            {METADATA_ICONS.appointmentType}
-                            {typeof value === 'string' ? value.replace('_', ' ') : value}
-                          </div>
-                        ) : (
-                          `${key}: ${value}`
-                        )}
-                      </Badge>
-                    ))}
+                    {Object.entries(event.metadata)
+                      .filter(
+                        ([, value]) => value !== false && value !== null && value !== undefined
+                      )
+                      .map(([key, value]) => (
+                        <Badge key={key} variant='outline' className='text-xs'>
+                          {key === 'providers' && Array.isArray(value) ? (
+                            <div className='flex items-center gap-1'>
+                              <METADATA_ICONS.providers className='w-3 h-3' />
+                              {value.join(', ')}
+                            </div>
+                          ) : key === 'duration' ? (
+                            <div className='flex items-center gap-1'>
+                              <METADATA_ICONS.duration className='w-3 h-3' />
+                              {value}
+                            </div>
+                          ) : key === 'aiGenerated' && value === true ? (
+                            <AIGeneratedBadge />
+                          ) : key === 'creator' ? (
+                            <div className='flex items-center gap-1'>
+                              <METADATA_ICONS.creator className='w-3 h-3' />
+                              {value}
+                            </div>
+                          ) : key === 'location' ? (
+                            <div className='flex items-center gap-1'>
+                              <METADATA_ICONS.location className='w-3 h-3' />
+                              {value}
+                            </div>
+                          ) : key === 'appointmentType' ? (
+                            <div className='flex items-center gap-1'>
+                              <METADATA_ICONS.appointmentType className='w-3 h-3' />
+                              {typeof value === 'string' ? value.replace('_', ' ') : value}
+                            </div>
+                          ) : (
+                            `${key}: ${value}`
+                          )}
+                        </Badge>
+                      ))}
                   </div>
                 )}
               </div>
