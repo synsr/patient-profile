@@ -33,6 +33,31 @@ import {
 import { getUpcomingAppointments } from '@/lib/utils/appointments';
 import { AIGeneratedBadge, UrgentBadge } from '@/components/badges';
 
+const MEASUREMENT_ICONS = {
+  weight: {
+    icon: Scale,
+    bgColor: 'bg-blue-100',
+    textColor: 'text-blue-600',
+  },
+  height: {
+    icon: Ruler,
+    bgColor: 'bg-green-100',
+    textColor: 'text-green-600',
+  },
+  bmi: {
+    icon: TrendingUp,
+    bgColor: 'bg-purple-100',
+    textColor: 'text-purple-600',
+  },
+  bloodPressure: {
+    icon: Heart,
+    bgColor: 'bg-red-100',
+    textColor: 'text-red-600',
+  },
+} as const;
+
+const VIEW_HISTORY_TEXT = 'View Full History';
+
 export function OverviewTab({ id }: { id: string }) {
   const { data, isLoading, error } = usePatientData(id);
   const { data: notesData } = usePatientNotes(id);
@@ -95,7 +120,7 @@ export function OverviewTab({ id }: { id: string }) {
           {/* Vital Signs */}
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-lg font-semibold'>Vital Signs</CardTitle>
+              <CardTitle className='text-lg font-semibold'>Measurements</CardTitle>
               <Button variant='outline' size='sm'>
                 <Pencil className='w-4 h-4 mr-2' />
                 Edit Vitals
@@ -105,8 +130,11 @@ export function OverviewTab({ id }: { id: string }) {
               <div className='grid grid-cols-2 gap-6'>
                 {weight && (
                   <div className='flex items-center gap-3'>
-                    <div className='h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center'>
-                      <Scale className='w-5 h-5 text-blue-600' />
+                    <div
+                      className={`h-10 w-10 rounded-full ${MEASUREMENT_ICONS.weight.bgColor} flex items-center justify-center`}>
+                      <MEASUREMENT_ICONS.weight.icon
+                        className={`w-5 h-5 ${MEASUREMENT_ICONS.weight.textColor}`}
+                      />
                     </div>
                     <div>
                       <div className='text-sm text-muted-foreground'>Weight</div>
@@ -118,8 +146,11 @@ export function OverviewTab({ id }: { id: string }) {
                 )}
                 {height && (
                   <div className='flex items-center gap-3'>
-                    <div className='h-10 w-10 rounded-full bg-green-100 flex items-center justify-center'>
-                      <Ruler className='w-5 h-5 text-green-600' />
+                    <div
+                      className={`h-10 w-10 rounded-full ${MEASUREMENT_ICONS.height.bgColor} flex items-center justify-center`}>
+                      <MEASUREMENT_ICONS.height.icon
+                        className={`w-5 h-5 ${MEASUREMENT_ICONS.height.textColor}`}
+                      />
                     </div>
                     <div>
                       <div className='text-sm text-muted-foreground'>Height</div>
@@ -131,8 +162,11 @@ export function OverviewTab({ id }: { id: string }) {
                 )}
                 {bmi && (
                   <div className='flex items-center gap-3'>
-                    <div className='h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center'>
-                      <TrendingUp className='w-5 h-5 text-purple-600' />
+                    <div
+                      className={`h-10 w-10 rounded-full ${MEASUREMENT_ICONS.bmi.bgColor} flex items-center justify-center`}>
+                      <MEASUREMENT_ICONS.bmi.icon
+                        className={`w-5 h-5 ${MEASUREMENT_ICONS.bmi.textColor}`}
+                      />
                     </div>
                     <div>
                       <div className='text-sm text-muted-foreground'>BMI</div>
@@ -142,8 +176,11 @@ export function OverviewTab({ id }: { id: string }) {
                 )}
                 {latestBP && (
                   <div className='flex items-center gap-3'>
-                    <div className='h-10 w-10 rounded-full bg-red-100 flex items-center justify-center'>
-                      <Heart className='w-5 h-5 text-red-600' />
+                    <div
+                      className={`h-10 w-10 rounded-full ${MEASUREMENT_ICONS.bloodPressure.bgColor} flex items-center justify-center`}>
+                      <MEASUREMENT_ICONS.bloodPressure.icon
+                        className={`w-5 h-5 ${MEASUREMENT_ICONS.bloodPressure.textColor}`}
+                      />
                     </div>
                     <div>
                       <div className='text-sm text-muted-foreground'>Blood Pressure</div>
@@ -167,7 +204,7 @@ export function OverviewTab({ id }: { id: string }) {
               <CardTitle className='text-lg font-semibold'>Medical History</CardTitle>
               <Button variant='ghost' size='sm'>
                 <FileText className='w-4 h-4 mr-2' />
-                View Full History
+                {VIEW_HISTORY_TEXT}
               </Button>
             </CardHeader>
             <CardContent>

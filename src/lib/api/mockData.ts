@@ -34,15 +34,10 @@ export const getPatientData = async (id: string): Promise<Patient> => {
 
 export const getPatientEvents = async (id: string): Promise<Event[]> => {
   await delay(500);
-  console.log('Fetching events for patient:', id);
-  console.log('All events data:', eventsData);
-
   // Filter events for this patient
   const filteredEvents = (eventsData as Event[]).filter((event) =>
     event.attendees.some((attendee: Attendee) => attendee.user.id === id)
   );
-
-  console.log('Filtered events:', filteredEvents);
   return filteredEvents;
 };
 

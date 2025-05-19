@@ -12,9 +12,11 @@ const NOTIFICATION_ICONS = {
   MESSAGE_RECEIVED: MessageSquare,
 } as const;
 
+const URGENT_TAG = 'Urgent';
+
 function NotificationCard({ notification }: { notification: Alert }) {
   const Icon = NOTIFICATION_ICONS[notification.type];
-  const isUrgent = notification.tags.some((tag) => tag.name === 'Urgent');
+  const isUrgent = notification.tags.some((tag) => tag.name === URGENT_TAG);
   const hasActionRequired = notification.actionRequired && !notification.resolvedDate;
 
   return (

@@ -317,3 +317,21 @@ export interface AlertsResponse {
   data: Alert[];
   total: number;
 }
+
+export interface TimelineEvent {
+  id: string;
+  type: 'APPOINTMENT' | 'NOTE' | 'MEMO';
+  title: string;
+  description: string;
+  date: string;
+  icon: React.ReactNode;
+  status?: 'COMPLETED' | 'CONFIRMED' | 'CANCELLED' | 'SCHEDULED';
+  metadata?: {
+    appointmentType?: string;
+    location?: string;
+    duration?: string;
+    providers?: string[];
+    aiGenerated?: boolean;
+    creator?: string;
+  };
+}

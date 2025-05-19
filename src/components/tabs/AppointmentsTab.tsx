@@ -13,11 +13,6 @@ export function AppointmentsTab({ id }: { id: string }) {
   if (isLoading) return <Skeleton className='h-96 w-full' />;
   if (error || !events) return <div>Error loading appointments</div>;
 
-  console.log(
-    'All events:',
-    events.map((e) => ({ id: e.id, title: e.title, status: e.status }))
-  );
-
   // Use updated utility for upcoming appointments
   const upcomingAppointments = events ? getUpcomingAppointments(events, id) : [];
   const recentVisits = events ? getRecentVisits(events, id).slice(0, 5) : [];

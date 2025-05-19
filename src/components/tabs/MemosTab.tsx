@@ -5,6 +5,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { MessageSquare, Plus, ChevronDown, ChevronUp, Pencil } from 'lucide-react';
 import { useState } from 'react';
 
+const INITIAL_DISPLAY_COUNT = 3;
+
 export function MemosTab({ id }: { id: string }) {
   const { data: memos, isLoading } = usePatientMemos(id);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -15,14 +17,18 @@ export function MemosTab({ id }: { id: string }) {
   const sortedMemos = [...memos].sort(
     (a, b) => new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime()
   );
-  const displayedMemos = isExpanded ? sortedMemos : sortedMemos.slice(0, 3);
+  const displayedMemos = isExpanded ? sortedMemos : sortedMemos.slice(0, INITIAL_DISPLAY_COUNT);
 
   const handleAddMemo = () => {
     // TODO: Implement add memo functionality
+    // This should open a modal or form to add a new memo
+    console.log('Add memo clicked');
   };
 
-  const handleEditMemo = () => {
+  const handleEditMemo = (memoId: string) => {
     // TODO: Implement edit memo functionality
+    // This should open a modal or form to edit the selected memo
+    console.log('Edit memo clicked', memoId);
   };
 
   return (
@@ -61,13 +67,17 @@ export function MemosTab({ id }: { id: string }) {
                   </div>
                   <p className='text-sm'>{memo.note}</p>
                 </div>
-                <Button variant='ghost' size='sm' onClick={handleEditMemo} className='ml-4'>
+                <Button
+                  variant='ghost'
+                  size='sm'
+                  onClick={() => handleEditMemo(memo.id)}
+                  className='ml-4'>
                   <Pencil className='w-4 h-4' />
                 </Button>
               </div>
             ))}
 
-            {memos.length > 3 && (
+            {memos.length > INITIAL_DISPLAY_COUNT && (
               <Button variant='ghost' className='w-full' onClick={() => setIsExpanded(!isExpanded)}>
                 {isExpanded ? (
                   <>
