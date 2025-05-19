@@ -19,7 +19,7 @@ A Next.js application for displaying patient information, events, and medical no
 - **React Query Integration**:
   - Automatic caching of API responses with unique query keys
   - Instant data access when switching between tabs (no refetch if data is cached)
-  - Parallel data fetching with `Promise.all` for concurrent loading
+  - Concurrent data fetching with built-in request deduplication
 - **Type-Safe API**: Comprehensive TypeScript types for all API responses and data structures
 
 ### 2. Component Architecture
