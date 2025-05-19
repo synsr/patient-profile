@@ -13,22 +13,23 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Calendar,
-  Clock,
   FileText,
+  MessageSquare,
+  Stethoscope,
+  AlertTriangle,
+  User,
   Pill,
   Plus,
-  Stethoscope,
-  MessageSquare,
   Heart,
   Scale,
   Ruler,
   Pencil,
   TrendingUp,
-  AlertTriangle,
   DollarSign,
   CreditCard,
   Bell,
-  User,
+  Clock,
+  MapPin,
 } from 'lucide-react';
 import { getUpcomingAppointments } from '@/lib/utils/appointments';
 import { AIGeneratedBadge, UrgentBadge } from '@/components/badges';
@@ -244,41 +245,42 @@ export function OverviewTab({ id }: { id: string }) {
             </CardHeader>
             <CardContent>
               {nextAppointment ? (
-                <div className='p-4 bg-blue-50 border border-blue-200 rounded-lg'>
-                  <div className='flex items-start gap-4'>
-                    <div className='h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center'>
-                      <Calendar className='w-6 h-6 text-blue-600' />
-                    </div>
-                    <div className='space-y-2 flex-1'>
-                      <div className='font-medium'>{nextAppointment.title}</div>
-                      <div className='flex items-center gap-4 text-sm text-blue-700'>
-                        <div className='flex items-center gap-2'>
-                          <Clock className='w-4 h-4' />
-                          {new Date(nextAppointment.start).toLocaleString(undefined, {
-                            year: 'numeric',
-                            month: 'numeric',
-                            day: 'numeric',
-                            hour: 'numeric',
-                            minute: 'numeric',
-                          })}
+                <div className='border rounded-lg overflow-hidden'>
+                  <div className='p-4 border-b bg-gray-50'>
+                    <div className='flex items-center justify-between'>
+                      <div className='flex items-center gap-3'>
+                        <div className='h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center'>
+                          <Calendar className='w-5 h-5 text-blue-600' />
                         </div>
-                        <div className='flex items-center gap-2'>
-                          <Stethoscope className='w-4 h-4' />
-                          {nextAppointment.appointment.appointmentType.replace('_', ' ')}
+                        <div>
+                          <div className='font-medium text-gray-900'>{nextAppointment.title}</div>
+                          <div className='text-sm text-gray-500'>
+                            {new Date(nextAppointment.start).toLocaleString(undefined, {
+                              weekday: 'long',
+                              month: 'long',
+                              day: 'numeric',
+                              hour: 'numeric',
+                              minute: 'numeric',
+                            })}
+                          </div>
                         </div>
                       </div>
-                      <div className='text-sm text-blue-700'>{nextAppointment.location.name}</div>
-                      <div className='text-sm text-blue-700'>
-                        {nextAppointment.appointment.reason}
-                      </div>
-                    </div>
-                    <div className='flex flex-col gap-2'>
                       <Button variant='outline' size='sm'>
                         Reschedule
                       </Button>
-                      <Button variant='outline' size='sm'>
-                        Cancel
-                      </Button>
+                    </div>
+                  </div>
+                  <div className='p-4 space-y-3'>
+                    <div className='flex items-center gap-2 text-sm text-gray-600'>
+                      <Stethoscope className='w-4 h-4' />
+                      <span>{nextAppointment.appointment.appointmentType.replace('_', ' ')}</span>
+                    </div>
+                    <div className='flex items-center gap-2 text-sm text-gray-600'>
+                      <MapPin className='w-4 h-4' />
+                      <span>{nextAppointment.location.name}</span>
+                    </div>
+                    <div className='text-sm text-gray-600'>
+                      {nextAppointment.appointment.reason}
                     </div>
                   </div>
                 </div>
