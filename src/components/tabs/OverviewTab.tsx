@@ -120,7 +120,7 @@ export function OverviewTab({ id }: { id: string }) {
           {/* Vital Signs */}
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-lg font-semibold'>Measurements</CardTitle>
+              <CardTitle className='text-lg font-semibold'>Vitals</CardTitle>
               <Button variant='outline' size='sm'>
                 <Pencil className='w-4 h-4 mr-2' />
                 Edit Vitals
