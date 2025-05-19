@@ -67,12 +67,12 @@ export function StatusBadge({
     PARTIALLY_PAID: {
       variant: 'outline',
       icon: Clock,
-      className: 'bg-yellow-50 text-yellow-800 border-yellow-200',
+      className: 'bg-orange-50 text-orange-800 border-orange-200',
     },
     UNPAID: {
       variant: 'outline',
       icon: AlertTriangle,
-      className: 'bg-orange-50 text-orange-800 border-orange-200',
+      className: 'bg-red-50 text-red-800 border-red-200',
     },
     SCHEDULED: {
       variant: 'secondary',
@@ -90,7 +90,7 @@ export function StatusBadge({
       className: 'bg-blue-50 text-blue-800 border-blue-200',
     },
     CANCELLED: {
-      variant: 'destructive',
+      variant: 'outline',
       icon: AlertTriangle,
       className: 'bg-red-50 text-red-800 border-red-200',
     },

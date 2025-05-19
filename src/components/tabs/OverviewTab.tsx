@@ -174,13 +174,16 @@ export function OverviewTab({ id }: { id: string }) {
               <div className='space-y-6'>
                 <div>
                   <div className='flex items-center gap-2 mb-3'>
-                    <AlertTriangle className='w-5 h-5 text-red-500' />
+                    <AlertTriangle className='w-5 h-5 text-orange-500' />
                     <div className='font-medium'>Allergies</div>
                   </div>
                   {patient.allergies.length > 0 ? (
                     <div className='flex flex-wrap gap-2'>
                       {patient.allergies.map((allergy) => (
-                        <Badge key={allergy} variant='destructive' className='px-3 py-1'>
+                        <Badge
+                          key={allergy}
+                          variant='secondary'
+                          className='bg-orange-50 text-orange-800 border-orange-200 px-4 py-1.5'>
                           {allergy}
                         </Badge>
                       ))}
@@ -197,7 +200,10 @@ export function OverviewTab({ id }: { id: string }) {
                   {patient.medicalHistory.length > 0 ? (
                     <div className='flex flex-wrap gap-2'>
                       {patient.medicalHistory.map((condition) => (
-                        <Badge key={condition} variant='secondary' className='px-3 py-1'>
+                        <Badge
+                          key={condition}
+                          variant='secondary'
+                          className='bg-blue-50 text-blue-800 border-blue-200 px-4 py-1.5'>
                           {condition}
                         </Badge>
                       ))}
