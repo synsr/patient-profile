@@ -26,7 +26,9 @@ import {
   DollarSign,
   CreditCard,
   Bell,
+  User,
 } from 'lucide-react';
+import { getUpcomingAppointments } from '@/lib/utils/appointments';
 
 export function OverviewTab({ id }: { id: string }) {
   const { data, isLoading, error } = usePatientData(id);
@@ -40,10 +42,14 @@ export function OverviewTab({ id }: { id: string }) {
   const { patient } = data;
   const latestNote = notesData?.data[0];
   const latestMemo = memosData?.[0];
-  const upcomingAppointments = events?.filter(
-    (event) => new Date(event.start) > new Date() && event.status === 'CONFIRMED'
-  );
-  const nextAppointment = upcomingAppointments?.[0];
+
+  // Debug logs
+  console.log('Patient ID:', patient.id);
+  console.log('All events:', events);
+
+  // Use updated utility for upcoming appointments
+  const upcomingAppointments = events ? getUpcomingAppointments(events, patient.id) : [];
+  const nextAppointment = upcomingAppointments[0];
 
   // Get active medications
   const activeMedications = patient.medications.filter((med) => med.active);
@@ -160,17 +166,24 @@ export function OverviewTab({ id }: { id: string }) {
 
           {/* Medical History */}
           <Card>
-            <CardHeader>
+            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-lg font-semibold'>Medical History</CardTitle>
+              <Button variant='ghost' size='sm'>
+                <FileText className='w-4 h-4 mr-2' />
+                View Full History
+              </Button>
             </CardHeader>
             <CardContent>
-              <div className='space-y-4'>
+              <div className='space-y-6'>
                 <div>
-                  <div className='font-medium mb-2'>Allergies</div>
+                  <div className='flex items-center gap-2 mb-3'>
+                    <AlertTriangle className='w-5 h-5 text-red-500' />
+                    <div className='font-medium'>Allergies</div>
+                  </div>
                   {patient.allergies.length > 0 ? (
                     <div className='flex flex-wrap gap-2'>
                       {patient.allergies.map((allergy) => (
-                        <Badge key={allergy} variant='destructive'>
+                        <Badge key={allergy} variant='destructive' className='px-3 py-1'>
                           {allergy}
                         </Badge>
                       ))}
@@ -180,11 +193,14 @@ export function OverviewTab({ id }: { id: string }) {
                   )}
                 </div>
                 <div>
-                  <div className='font-medium mb-2'>Medical History</div>
+                  <div className='flex items-center gap-2 mb-3'>
+                    <Stethoscope className='w-5 h-5 text-blue-500' />
+                    <div className='font-medium'>Medical History</div>
+                  </div>
                   {patient.medicalHistory.length > 0 ? (
                     <div className='flex flex-wrap gap-2'>
                       {patient.medicalHistory.map((condition) => (
-                        <Badge key={condition} variant='secondary'>
+                        <Badge key={condition} variant='secondary' className='px-3 py-1'>
                           {condition}
                         </Badge>
                       ))}
@@ -194,11 +210,14 @@ export function OverviewTab({ id }: { id: string }) {
                   )}
                 </div>
                 <div>
-                  <div className='font-medium mb-2'>Family History</div>
+                  <div className='flex items-center gap-2 mb-3'>
+                    <User className='w-5 h-5 text-purple-500' />
+                    <div className='font-medium'>Family History</div>
+                  </div>
                   {patient.familyHistory.length > 0 ? (
                     <div className='flex flex-wrap gap-2'>
                       {patient.familyHistory.map((condition) => (
-                        <Badge key={condition} variant='outline'>
+                        <Badge key={condition} variant='outline' className='px-3 py-1'>
                           {condition}
                         </Badge>
                       ))}
@@ -208,6 +227,69 @@ export function OverviewTab({ id }: { id: string }) {
                   )}
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Next Appointment */}
+          <Card>
+            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+              <CardTitle className='text-lg font-semibold'>Next Appointment</CardTitle>
+              <Button variant='ghost' size='sm' asChild>
+                <a href={`/appointments?patientId=${id}`}>
+                  <Calendar className='w-4 h-4 mr-2' />
+                  View All
+                </a>
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {nextAppointment ? (
+                <div className='p-4 bg-blue-50 border border-blue-200 rounded-lg'>
+                  <div className='flex items-start gap-4'>
+                    <div className='h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center'>
+                      <Calendar className='w-6 h-6 text-blue-600' />
+                    </div>
+                    <div className='space-y-2 flex-1'>
+                      <div className='font-medium'>{nextAppointment.title}</div>
+                      <div className='flex items-center gap-4 text-sm text-blue-700'>
+                        <div className='flex items-center gap-2'>
+                          <Clock className='w-4 h-4' />
+                          {new Date(nextAppointment.start).toLocaleString(undefined, {
+                            year: 'numeric',
+                            month: 'numeric',
+                            day: 'numeric',
+                            hour: 'numeric',
+                            minute: 'numeric',
+                          })}
+                        </div>
+                        <div className='flex items-center gap-2'>
+                          <Stethoscope className='w-4 h-4' />
+                          {nextAppointment.appointment.appointmentType.replace('_', ' ')}
+                        </div>
+                      </div>
+                      <div className='text-sm text-blue-700'>{nextAppointment.location.name}</div>
+                      <div className='text-sm text-blue-700'>
+                        {nextAppointment.appointment.reason}
+                      </div>
+                    </div>
+                    <div className='flex flex-col gap-2'>
+                      <Button variant='outline' size='sm' asChild>
+                        <a
+                          href={`/appointments?patientId=${id}&action=reschedule&appointmentId=${nextAppointment.id}`}>
+                          Reschedule
+                        </a>
+                      </Button>
+                      <Button variant='outline' size='sm' asChild>
+                        <a
+                          href={`/appointments?patientId=${id}&action=cancel&appointmentId=${nextAppointment.id}`}>
+                          Cancel
+                        </a>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className='text-muted-foreground'>No upcoming appointments</div>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -310,49 +392,57 @@ export function OverviewTab({ id }: { id: string }) {
         </div>
       </div>
 
-      {/* Current Medications */}
-      <Card>
-        <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-          <CardTitle className='text-lg font-semibold'>Current Medications</CardTitle>
-          <Button variant='outline' size='sm'>
-            <Plus className='w-4 h-4 mr-2' />
-            Add Medication
-          </Button>
-        </CardHeader>
-        <CardContent>
-          {activeMedications.length > 0 ? (
-            <div className='space-y-4'>
-              {activeMedications.map((med) => (
-                <div
-                  key={med.id}
-                  className='flex items-start justify-between p-3 border rounded-lg'>
-                  <div className='flex items-start gap-3'>
-                    <Pill className='w-5 h-5 text-muted-foreground mt-1' />
-                    <div>
-                      <div className='font-medium'>{med.name}</div>
-                      <div className='text-sm text-muted-foreground'>
-                        {med.dosage} • {med.frequency}
+      {/* Current Medications and Recent Activity */}
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+        {/* Current Medications */}
+        <Card className='md:col-span-2'>
+          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+            <CardTitle className='text-lg font-semibold'>Current Medications</CardTitle>
+            <Button variant='outline' size='sm'>
+              <Plus className='w-4 h-4 mr-2' />
+              Add Medication
+            </Button>
+          </CardHeader>
+          <CardContent>
+            {activeMedications.length > 0 ? (
+              <div className='space-y-4'>
+                {activeMedications.map((med) => (
+                  <div
+                    key={med.id}
+                    className='flex items-start justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors'>
+                    <div className='flex items-start gap-4'>
+                      <div className='h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center'>
+                        <Pill className='w-5 h-5 text-blue-600' />
                       </div>
-                      <div className='text-xs text-muted-foreground mt-1'>
-                        Started: {new Date(med.startDate).toLocaleDateString()}
-                        {med.endDate && ` • Ends: ${new Date(med.endDate).toLocaleDateString()}`}
+                      <div className='space-y-1'>
+                        <div className='font-medium'>{med.name}</div>
+                        <div className='text-sm text-muted-foreground'>
+                          {med.dosage} • {med.frequency}
+                        </div>
+                        <div className='text-xs text-muted-foreground'>
+                          Started: {new Date(med.startDate).toLocaleDateString()}
+                          {med.endDate && ` • Ends: ${new Date(med.endDate).toLocaleDateString()}`}
+                        </div>
                       </div>
                     </div>
+                    <div className='flex items-center gap-2'>
+                      <Button variant='ghost' size='sm'>
+                        <FileText className='w-4 h-4 mr-2' />
+                        Notes
+                      </Button>
+                      <Button variant='outline' size='sm'>
+                        Refill
+                      </Button>
+                    </div>
                   </div>
-                  <Button variant='ghost' size='sm'>
-                    Refill
-                  </Button>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className='text-muted-foreground'>No active medications</div>
-          )}
-        </CardContent>
-      </Card>
+                ))}
+              </div>
+            ) : (
+              <div className='text-muted-foreground'>No active medications</div>
+            )}
+          </CardContent>
+        </Card>
 
-      {/* Recent Activity */}
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
         {/* Latest Clinical Note */}
         <Card>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
@@ -364,55 +454,22 @@ export function OverviewTab({ id }: { id: string }) {
           </CardHeader>
           <CardContent>
             {latestNote ? (
-              <div>
-                <div className='text-sm text-muted-foreground mb-2'>
-                  {new Date(latestNote.createdDate).toLocaleDateString()} by{' '}
-                  {latestNote.providerNames.join(', ')}
+              <div className='space-y-3'>
+                <div className='flex items-center gap-2 text-sm text-muted-foreground'>
+                  <Calendar className='w-4 h-4' />
+                  {new Date(latestNote.createdDate).toLocaleDateString()}
                 </div>
                 <div className='font-medium'>{latestNote.summary}</div>
+                <div className='flex items-center gap-2 text-sm text-muted-foreground'>
+                  <Stethoscope className='w-4 h-4' />
+                  {latestNote.providerNames.join(', ')}
+                </div>
                 {latestNote.aiGenerated && (
-                  <div className='text-xs text-muted-foreground mt-2 italic'>
-                    AI-generated summary
-                  </div>
+                  <div className='text-xs text-muted-foreground italic'>AI-generated summary</div>
                 )}
               </div>
             ) : (
               <div className='text-muted-foreground'>No notes found</div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Next Appointment */}
-        <Card>
-          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-lg font-semibold'>Next Appointment</CardTitle>
-            <Button variant='ghost' size='sm'>
-              <Calendar className='w-4 h-4 mr-2' />
-              View All
-            </Button>
-          </CardHeader>
-          <CardContent>
-            {nextAppointment ? (
-              <div>
-                <div className='flex items-center gap-2 mb-2'>
-                  <Clock className='w-4 h-4 text-muted-foreground' />
-                  <span className='text-sm text-muted-foreground'>
-                    {new Date(nextAppointment.start).toLocaleString()}
-                  </span>
-                </div>
-                <div className='font-medium'>{nextAppointment.title}</div>
-                <div className='text-sm text-muted-foreground mt-1'>
-                  {nextAppointment.location.name}
-                </div>
-                <div className='flex items-center gap-2 mt-2'>
-                  <Stethoscope className='w-4 h-4 text-muted-foreground' />
-                  <span className='text-sm text-muted-foreground'>
-                    {nextAppointment.appointment.appointmentType.replace('_', ' ')}
-                  </span>
-                </div>
-              </div>
-            ) : (
-              <div className='text-muted-foreground'>No upcoming appointments</div>
             )}
           </CardContent>
         </Card>

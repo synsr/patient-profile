@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Calendar, Clock, MapPin, User, Users, Video, CheckCircle } from 'lucide-react';
+import { getUpcomingAppointments, getRecentVisits } from '@/lib/utils/appointments';
 
 export function AppointmentsTab({ id }: { id: string }) {
   const { data: events, isLoading, error } = usePatientEvents(id);
@@ -16,23 +17,9 @@ export function AppointmentsTab({ id }: { id: string }) {
     events.map((e) => ({ id: e.id, title: e.title, status: e.status }))
   );
 
-  // Filter and sort appointments
-  const upcomingAppointments = events
-    .filter((event) => {
-      console.log('Checking event:', { id: event.id, title: event.title, status: event.status });
-      return event.status === 'CONFIRMED';
-    })
-    .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
-
-  console.log(
-    'Upcoming appointments:',
-    upcomingAppointments.map((e) => ({ id: e.id, title: e.title, status: e.status }))
-  );
-
-  const recentVisits = events
-    .filter((event) => event.status === 'COMPLETED')
-    .sort((a, b) => new Date(b.start).getTime() - new Date(a.start).getTime())
-    .slice(0, 5);
+  // Use updated utility for upcoming appointments
+  const upcomingAppointments = events ? getUpcomingAppointments(events, id) : [];
+  const recentVisits = events ? getRecentVisits(events, id).slice(0, 5) : [];
 
   const noShows = events
     .filter((event) => event.status === 'CANCELLED')
