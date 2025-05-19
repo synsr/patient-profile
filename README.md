@@ -2,17 +2,19 @@
 
 A Next.js application for displaying patient information, events, and medical notes.
 
-## Assumptions
+## Assumptions & Decisions
 
-- Desktop-first design (primary users are doctors and front desk staff)
+- Desktop-first design (primary users are doctors and front desk staff) due to time contraints not making it responsive for mobile
 - Single page application with no navigation
 - All data can be loaded upfront (no pagination)
 - Mock data structure will be updated to reflect changes
 - No authentication required
 - API returns data in the correct order (e.g., clinical notes are returned newest first)
 - No client-side sorting is needed as the API handles data ordering
+- No tests written, focussed on functionality and design
+- No accessibility support added, due to time constraints
 
-## Key Architecture Decisions
+## Architecture & Design
 
 ### 1. Data Layer
 
@@ -27,7 +29,6 @@ A Next.js application for displaying patient information, events, and medical no
 - **Tab-Based Navigation**: Clear separation of concerns with dedicated tabs for different data types
 - **Reusable Components**: Shared UI components (badges, cards, buttons) with consistent styling
 - **Smart Data Processing**: Utility functions for data transformation (e.g., `extractKeyEvents` in TimelineTab)
-- **Responsive Design**: Mobile-first approach with desktop-optimized layouts
 
 ### 3. UI/UX Approach
 
@@ -60,13 +61,13 @@ A Next.js application for displaying patient information, events, and medical no
 1. Install dependencies:
 
 ```bash
-npm install
+bun install
 ```
 
 2. Run the development server:
 
 ```bash
-npm run dev
+bun run dev
 ```
 
 3. Open [http://localhost:3000](http://localhost:3000) in your browser.
