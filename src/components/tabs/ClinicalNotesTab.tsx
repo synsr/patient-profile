@@ -1,6 +1,6 @@
 import { usePatientNotes } from '@/lib/api/mockData';
-import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp, Plus, Edit } from 'lucide-react';
 import { useState } from 'react';
@@ -61,7 +61,6 @@ export function ClinicalNotesTab({ id }: { id: string }) {
                           {note.providerNames.join(', ')}
                         </span>
                         {isLatest && <LatestBadge className='ml-2' />}
-                        {note.aiGenerated && <AIGeneratedBadge />}
                         {note.version > 1 && <VersionBadge version={note.version} />}
                       </div>
                       <div className='text-sm text-gray-500'>
@@ -85,8 +84,23 @@ export function ClinicalNotesTab({ id }: { id: string }) {
                   </div>
 
                   {/* Summary Section - Always visible */}
-                  <div className='space-y-2'>
-                    <h3 className='font-medium'>Summary</h3>
+                  <div
+                    className={cn(
+                      'space-y-2 rounded-lg p-3',
+                      note.aiGenerated
+                        ? 'bg-purple-50 border border-purple-100'
+                        : 'border border-gray-200'
+                    )}>
+                    <div className='flex items-center justify-between'>
+                      <h3
+                        className={cn(
+                          'font-medium',
+                          note.aiGenerated ? 'text-purple-900' : 'text-gray-900'
+                        )}>
+                        Summary
+                      </h3>
+                      {note.aiGenerated && <AIGeneratedBadge />}
+                    </div>
                     <p className='text-gray-700'>{note.summary}</p>
                   </div>
 
