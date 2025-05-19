@@ -164,33 +164,41 @@ export function TimelineTab({ id }: { id: string }) {
                 {/* Metadata */}
                 {event.metadata && (
                   <div className='flex flex-wrap gap-2'>
-                    {Object.entries(event.metadata).map(([key, value]) => (
-                      <Badge key={key} variant='outline' className='text-xs'>
-                        {key === 'duration' ? (
-                          <div className='flex items-center gap-1'>
-                            <METADATA_ICONS.duration className='w-3 h-3' />
-                            {value}
-                          </div>
-                        ) : key === 'creator' ? (
-                          <div className='flex items-center gap-1'>
-                            <METADATA_ICONS.creator className='w-3 h-3' />
-                            {value}
-                          </div>
-                        ) : key === 'location' ? (
-                          <div className='flex items-center gap-1'>
-                            <METADATA_ICONS.location className='w-3 h-3' />
-                            {value}
-                          </div>
-                        ) : key === 'appointmentType' ? (
-                          <div className='flex items-center gap-1'>
-                            <METADATA_ICONS.appointmentType className='w-3 h-3' />
-                            {typeof value === 'string' ? value.replace('_', ' ') : value}
-                          </div>
-                        ) : (
-                          `${key}: ${value}`
-                        )}
-                      </Badge>
-                    ))}
+                    {Object.entries(event.metadata)
+                      .filter(
+                        ([key, value]) =>
+                          key !== 'aiGenerated' &&
+                          value !== false &&
+                          value !== null &&
+                          value !== undefined
+                      )
+                      .map(([key, value]) => (
+                        <Badge key={key} variant='outline' className='text-xs'>
+                          {key === 'duration' ? (
+                            <div className='flex items-center gap-1'>
+                              <METADATA_ICONS.duration className='w-3 h-3' />
+                              {value}
+                            </div>
+                          ) : key === 'creator' ? (
+                            <div className='flex items-center gap-1'>
+                              <METADATA_ICONS.creator className='w-3 h-3' />
+                              {value}
+                            </div>
+                          ) : key === 'location' ? (
+                            <div className='flex items-center gap-1'>
+                              <METADATA_ICONS.location className='w-3 h-3' />
+                              {value}
+                            </div>
+                          ) : key === 'appointmentType' ? (
+                            <div className='flex items-center gap-1'>
+                              <METADATA_ICONS.appointmentType className='w-3 h-3' />
+                              {typeof value === 'string' ? value.replace('_', ' ') : value}
+                            </div>
+                          ) : (
+                            `${key}: ${value}`
+                          )}
+                        </Badge>
+                      ))}
                     {event.metadata.aiGenerated && <AIGeneratedBadge />}
                   </div>
                 )}
