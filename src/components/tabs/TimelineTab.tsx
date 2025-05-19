@@ -184,7 +184,11 @@ export function TimelineTab({ id }: { id: string }) {
                   <div className='flex flex-wrap gap-2'>
                     {Object.entries(event.metadata)
                       .filter(
-                        ([, value]) => value !== false && value !== null && value !== undefined
+                        ([key, value]) =>
+                          key !== 'aiGenerated' &&
+                          value !== false &&
+                          value !== null &&
+                          value !== undefined
                       )
                       .map(([key, value]) => (
                         <Badge key={key} variant='outline' className='text-xs'>
@@ -198,8 +202,6 @@ export function TimelineTab({ id }: { id: string }) {
                               <METADATA_ICONS.duration className='w-3 h-3' />
                               {value}
                             </div>
-                          ) : key === 'aiGenerated' && value === true ? (
-                            <AIGeneratedBadge />
                           ) : key === 'creator' ? (
                             <div className='flex items-center gap-1'>
                               <METADATA_ICONS.creator className='w-3 h-3' />
@@ -220,6 +222,7 @@ export function TimelineTab({ id }: { id: string }) {
                           )}
                         </Badge>
                       ))}
+                    {event.metadata.aiGenerated && <AIGeneratedBadge />}
                   </div>
                 )}
               </div>
