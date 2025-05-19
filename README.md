@@ -12,140 +12,48 @@ A Next.js application for displaying patient information, events, and medical no
 - API returns data in the correct order (e.g., clinical notes are returned newest first)
 - No client-side sorting is needed as the API handles data ordering
 
-## Design Decisions
-
-### Information Architecture
-
-- **Critical Information First**: Patient's current status, active alerts, and upcoming events are immediately visible
-- **Hierarchical Layout**:
-  - Top: Patient identity, current status, and active alerts
-  - Middle: Recent events and notes (last 7 days)
-  - Bottom: Historical data and detailed records
-- **Data Prioritization**:
-  - Active alerts and critical information are highlighted
-  - Recent events and notes are easily scannable
-  - Historical data is accessible but not prominent
-
-### UI/UX Approach
-
-- **Desktop-Optimized Layout**:
-  - Multi-column design for efficient space utilization
-  - Sidebar for quick navigation between sections
-  - Fixed header with critical patient information
-- **Visual Hierarchy**:
-  - Clear typography scale for different information levels
-  - Color coding for alerts and status indicators
-  - Consistent spacing and alignment
-- **Interactive Elements**:
-  - Expandable sections for detailed information
-  - Quick filters for events and notes
-  - Hover states for additional context
-
-## Architecture & Design Decisions
+## Key Architecture Decisions
 
 ### 1. Data Layer
 
-- **Single Data Fetching Hook**: Using a single `usePatientData` hook instead of multiple hooks to:
-  - Prevent race conditions
-  - Ensure data consistency
-  - Reduce network requests
-  - Simplify state management
-- **Mock API Structure**:
-  - Organized under `src/lib/api/mock/` to clearly separate mock data from real API implementations
-  - Simulated network delays for realistic testing
-  - Type-safe API responses
+- **React Query Integration**:
+  - Automatic caching of API responses with unique query keys
+  - Instant data access when switching between tabs (no refetch if data is cached)
+  - Parallel data fetching with `Promise.all` for concurrent loading
+- **Type-Safe API**: Comprehensive TypeScript types for all API responses and data structures
 
 ### 2. Component Architecture
 
-- **Server vs Client Components**:
-  - Only `PatientProfile` is a client component (uses React Query)
-  - Other components (`PatientHeader`, `EventsList`, `NotesList`, `PatientSkeleton`) are server components
+- **Tab-Based Navigation**: Clear separation of concerns with dedicated tabs for different data types
+- **Reusable Components**: Shared UI components (badges, cards, buttons) with consistent styling
+- **Smart Data Processing**: Utility functions for data transformation (e.g., `extractKeyEvents` in TimelineTab)
+- **Responsive Design**: Mobile-first approach with desktop-optimized layouts
+
+### 3. UI/UX Approach
+
+- **Information Hierarchy**:
+  - Critical information (alerts, upcoming events) immediately visible
+  - Recent events and notes easily scannable
+  - Historical data accessible but not prominent
+- **Visual Consistency**:
+  - Consistent color scheme using CSS variables
+  - Standardized spacing and typography
+  - Clear visual indicators for status and importance
+- **Interactive Elements**:
+  - Expandable sections for detailed information
+  - Quick actions for common tasks
+  - Clear feedback for user actions
+
+### 4. Performance Considerations
+
+- **Hybrid Rendering Strategy**:
+  - Server Components for static UI elements (headers, layouts, static content)
+  - Client Components for interactive elements (data fetching, state management)
   - Benefits:
-    - Better performance through server-side rendering
-    - Reduced client-side JavaScript
-    - Clear separation of concerns
-
-### 3. UI/UX Considerations
-
-- **Loading States**:
-  - Skeleton loading for initial data fetch
-  - Smooth transitions between states
-- **Error Handling**:
-  - Graceful error states
-  - User-friendly error messages
-- **Responsive Design**:
-  - Mobile-first approach
-  - Grid layout for larger screens
-  - Consistent spacing and typography
-
-### 4. Performance Optimizations
-
-- **Data Fetching**:
-  - Parallel data fetching with `Promise.all`
-  - React Query for efficient caching
-  - No unnecessary re-renders
-- **Component Structure**:
-  - Minimal client-side JavaScript
-  - Server-side rendering where possible
-  - Efficient prop drilling
-
-### 5. Type Safety
-
-- Comprehensive TypeScript types for:
-  - API responses
-  - Component props
-  - Event handlers
-- Strict type checking for better development experience
-
-## Project Structure
-
-```
-src/
-├── app/
-│   └── patients/
-│       └── [id]/
-│           └── page.tsx
-├── components/
-│   ├── PatientProfile.tsx
-│   ├── PatientHeader.tsx
-│   ├── EventsList.tsx
-│   ├── NotesList.tsx
-│   └── PatientSkeleton.tsx
-└── lib/
-    ├── api/
-    │   ├── mock/
-    │   │   ├── patient.json
-    │   │   ├── events.json
-    │   │   └── doctors_notes.json
-    │   └── mockData.ts
-    └── types/
-        └── index.ts
-```
-
-## Future Improvements
-
-1. **Data Layer**:
-
-   - Add proper error boundaries
-   - Implement retry logic for failed requests
-   - Add data validation
-
-2. **UI/UX**:
-
-   - Add notes creation functionality
-   - Implement search and filtering
-   - Add pagination for events and notes
-
-3. **Performance**:
-
-   - Implement proper caching strategies
-   - Add performance monitoring
-   - Optimize bundle size
-
-4. **Testing**:
-   - Add unit tests
-   - Add integration tests
-   - Add E2E tests
+    - Reduced Time to Interactive (TTI) by minimizing client-side JavaScript
+    - Improved First Contentful Paint (FCP) through server rendering
+    - Optimized bundle size by splitting server and client code
+- **Code Organization**: Clear separation of concerns between data, UI, and business logic
 
 ## Getting Started
 
@@ -168,5 +76,6 @@ npm run dev
 - Next.js 13+ (App Router)
 - TypeScript
 - Tailwind CSS
-- React Query
 - TanStack Query
+- shadcn/ui (built on Radix UI)
+- Lucide Icons
