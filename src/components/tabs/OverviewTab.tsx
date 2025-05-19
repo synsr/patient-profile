@@ -3,6 +3,8 @@ import {
   usePatientNotes,
   usePatientEvents,
   usePatientMemos,
+  usePatientAlerts,
+  usePatientCharges,
 } from '@/lib/api/mockData';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -35,6 +37,8 @@ export function OverviewTab({ id }: { id: string }) {
   const { data: notesData } = usePatientNotes(id);
   const { data: events } = usePatientEvents(id);
   const { data: memosData } = usePatientMemos(id);
+  const { data: alertsData } = usePatientAlerts(id);
+  const { data: chargesData } = usePatientCharges(id);
 
   if (isLoading) return <Skeleton className='h-96 w-full' />;
   if (error || !data) return <div>Error loading patient data</div>;
@@ -43,9 +47,10 @@ export function OverviewTab({ id }: { id: string }) {
   const latestNote = notesData?.data[0];
   const latestMemo = memosData?.[0];
 
-  // Debug logs
-  console.log('Patient ID:', patient.id);
-  console.log('All events:', events);
+  // Get the most important alert (urgent first, then latest)
+  const latestAlert =
+    alertsData?.data.find((alert) => alert.tags.some((tag) => tag.name === 'Urgent')) ||
+    alertsData?.data[0];
 
   // Use updated utility for upcoming appointments
   const upcomingAppointments = events ? getUpcomingAppointments(events, patient.id) : [];
@@ -70,21 +75,12 @@ export function OverviewTab({ id }: { id: string }) {
 
   const bmi = weight && height ? calculateBMI(Number(weight.value), Number(height.value)) : null;
 
-  // Get latest alerts and messages
-  const latestAlert = {
-    type: 'MESSAGE_RECEIVED',
-    message: 'Patient reported increased allergy symptoms despite taking medication as prescribed.',
-    date: '2023-09-25T14:30:00Z',
-    urgent: true,
-  };
-
-  // Get payment information
-  const outstandingBalance = 135.0; // This would come from your billing data
-  const recentPayment = {
-    amount: 175.0,
-    date: '2023-08-20T14:30:00Z',
-    method: 'Visa ending in 4242',
-  };
+  // Get payment information from charges data
+  const charges = chargesData?.data || [];
+  const outstandingBalance = charges.reduce((sum, charge) => sum + charge.totalOutstanding, 0);
+  const recentPayment = charges
+    .flatMap((charge) => charge.payments)
+    .sort((a, b) => new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime())[0];
 
   return (
     <div className='space-y-8'>
@@ -291,7 +287,7 @@ export function OverviewTab({ id }: { id: string }) {
           {/* Alerts and Messages */}
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-lg font-semibold'>Alerts & Messages</CardTitle>
+              <CardTitle className='text-lg font-semibold'>Notifications</CardTitle>
               <Button variant='ghost' size='sm'>
                 <Bell className='w-4 h-4 mr-2' />
                 View All
@@ -300,19 +296,61 @@ export function OverviewTab({ id }: { id: string }) {
             <CardContent>
               <div className='space-y-4'>
                 {latestAlert && (
-                  <div className='p-4 bg-yellow-50 border border-yellow-200 rounded-lg'>
+                  <div
+                    className={`p-4 ${
+                      latestAlert.tags.some((tag) => tag.name === 'Urgent')
+                        ? 'bg-red-50 border-red-200'
+                        : 'bg-yellow-50 border-yellow-200'
+                    } border rounded-lg`}>
                     <div className='flex items-start gap-3'>
-                      <AlertTriangle className='w-5 h-5 text-yellow-600 mt-0.5' />
+                      <AlertTriangle
+                        className={`w-5 h-5 ${
+                          latestAlert.tags.some((tag) => tag.name === 'Urgent')
+                            ? 'text-red-600'
+                            : 'text-yellow-600'
+                        } mt-0.5`}
+                      />
                       <div>
                         <div className='flex items-center gap-2'>
-                          <span className='text-sm font-medium text-yellow-800'>
-                            Urgent Message
+                          <span
+                            className={`text-sm font-medium ${
+                              latestAlert.tags.some((tag) => tag.name === 'Urgent')
+                                ? 'text-red-800'
+                                : 'text-yellow-800'
+                            }`}>
+                            {latestAlert.type === 'MESSAGE_RECEIVED'
+                              ? 'New Message'
+                              : latestAlert.type === 'FORM_SUBMITTED'
+                              ? 'Form Submitted'
+                              : 'Appointment Scheduled'}
                           </span>
-                          <Badge variant='destructive'>Urgent</Badge>
+                          {latestAlert.tags.some((tag) => tag.name === 'Urgent') && (
+                            <Badge variant='destructive'>Urgent</Badge>
+                          )}
+                          {latestAlert.actionRequired &&
+                            !latestAlert.tags.some((tag) => tag.name === 'Urgent') && (
+                              <Badge variant='secondary'>Action Required</Badge>
+                            )}
                         </div>
-                        <p className='text-sm text-yellow-700 mt-1'>{latestAlert.message}</p>
-                        <div className='text-xs text-yellow-600 mt-2'>
-                          {new Date(latestAlert.date).toLocaleDateString()}
+                        <p
+                          className={`text-sm ${
+                            latestAlert.tags.some((tag) => tag.name === 'Urgent')
+                              ? 'text-red-700'
+                              : 'text-yellow-700'
+                          } mt-1`}>
+                          {latestAlert.type === 'MESSAGE_RECEIVED'
+                            ? latestAlert.data.message
+                            : latestAlert.type === 'FORM_SUBMITTED'
+                            ? `${latestAlert.data.name} Submitted`
+                            : `Appointment: ${latestAlert.data.title}`}
+                        </p>
+                        <div
+                          className={`text-xs ${
+                            latestAlert.tags.some((tag) => tag.name === 'Urgent')
+                              ? 'text-red-600'
+                              : 'text-yellow-600'
+                          } mt-2`}>
+                          {new Date(latestAlert.createdDate).toLocaleDateString()}
                         </div>
                       </div>
                     </div>
@@ -369,10 +407,24 @@ export function OverviewTab({ id }: { id: string }) {
                       <div>
                         <div className='text-sm font-medium text-gray-800'>Recent Payment</div>
                         <div className='text-sm text-gray-700 mt-1'>
-                          ${recentPayment.amount.toFixed(2)} via {recentPayment.method}
+                          <span className='font-semibold'>${recentPayment.amount.toFixed(2)}</span>
+                          {recentPayment.paymentMethod && (
+                            <>
+                              {' via '}
+                              {recentPayment.paymentMedium === 'CARD'
+                                ? `${recentPayment.paymentMethod.brand} ending in ${recentPayment.paymentMethod.last4}`
+                                : recentPayment.paymentMedium === 'CASH'
+                                ? 'Cash'
+                                : recentPayment.paymentMedium === 'CHECK'
+                                ? 'Check'
+                                : recentPayment.paymentMedium === 'INSURANCE'
+                                ? 'Insurance'
+                                : recentPayment.paymentMedium}
+                            </>
+                          )}
                         </div>
                         <div className='text-xs text-gray-500 mt-2'>
-                          {new Date(recentPayment.date).toLocaleDateString()}
+                          {new Date(recentPayment.createdDate).toLocaleDateString()}
                         </div>
                       </div>
                     </div>
