@@ -17,6 +17,7 @@ import {
   MapPin,
 } from 'lucide-react';
 import { Event, DoctorsNote, Memo } from '@/lib/types';
+import { StatusBadge, AIGeneratedBadge } from '@/components/badges';
 
 const EVENT_ICONS = {
   APPOINTMENT: <Calendar className='w-5 h-5 text-blue-600' />,
@@ -40,7 +41,7 @@ type TimelineEvent = {
   description: string;
   date: string;
   icon: React.ReactNode;
-  status?: string;
+  status?: 'COMPLETED' | 'CONFIRMED' | 'CANCELLED' | 'SCHEDULED';
   metadata?: {
     appointmentType?: string;
     location?: string;
@@ -163,18 +164,7 @@ export function TimelineTab({ id }: { id: string }) {
                 <div className='flex items-center justify-between mb-2'>
                   <div className='flex items-center gap-2'>
                     <span className='font-medium'>{event.title}</span>
-                    {event.status && (
-                      <Badge
-                        variant={
-                          event.status === 'CONFIRMED'
-                            ? 'default'
-                            : event.status === 'COMPLETED'
-                            ? 'secondary'
-                            : 'destructive'
-                        }>
-                        {event.status}
-                      </Badge>
-                    )}
+                    {event.status && <StatusBadge status={event.status} />}
                   </div>
                   <div className='text-sm text-muted-foreground'>
                     {new Date(event.date).toLocaleString(undefined, {
@@ -204,11 +194,8 @@ export function TimelineTab({ id }: { id: string }) {
                             {METADATA_ICONS.duration}
                             {value}
                           </div>
-                        ) : key === 'aiGenerated' ? (
-                          <div className='flex items-center gap-1'>
-                            {METADATA_ICONS.aiGenerated}
-                            AI-generated
-                          </div>
+                        ) : key === 'aiGenerated' && value ? (
+                          <AIGeneratedBadge />
                         ) : key === 'creator' ? (
                           <div className='flex items-center gap-1'>
                             {METADATA_ICONS.creator}

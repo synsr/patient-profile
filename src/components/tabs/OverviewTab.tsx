@@ -31,6 +31,7 @@ import {
   User,
 } from 'lucide-react';
 import { getUpcomingAppointments } from '@/lib/utils/appointments';
+import { AIGeneratedBadge } from '@/components/badges';
 
 export function OverviewTab({ id }: { id: string }) {
   const { data, isLoading, error } = usePatientData(id);
@@ -508,9 +509,7 @@ export function OverviewTab({ id }: { id: string }) {
                   <Stethoscope className='w-4 h-4' />
                   {latestNote.providerNames.join(', ')}
                 </div>
-                {latestNote.aiGenerated && (
-                  <div className='text-xs text-muted-foreground italic'>AI-generated summary</div>
-                )}
+                {latestNote.aiGenerated && <AIGeneratedBadge />}
               </div>
             ) : (
               <div className='text-muted-foreground'>No notes found</div>

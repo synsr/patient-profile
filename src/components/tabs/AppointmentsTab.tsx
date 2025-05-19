@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Calendar, Clock, MapPin, User, Users, Video, CheckCircle } from 'lucide-react';
 import { getUpcomingAppointments, getRecentVisits } from '@/lib/utils/appointments';
+import { StatusBadge } from '@/components/badges';
 
 export function AppointmentsTab({ id }: { id: string }) {
   const { data: events, isLoading, error } = usePatientEvents(id);
@@ -110,10 +111,7 @@ export function AppointmentsTab({ id }: { id: string }) {
                       <div className='text-sm text-gray-600'>{event.appointment.reason}</div>
                       <div className='flex gap-2'>
                         <Badge variant='outline'>{event.appointment.appointmentType}</Badge>
-                        <Badge variant='secondary'>
-                          Confirmed{' '}
-                          {new Date(event.appointment.confirmationDate).toLocaleDateString()}
-                        </Badge>
+                        <StatusBadge status='CONFIRMED' />
                       </div>
                     </div>
                   </div>
@@ -172,9 +170,9 @@ export function AppointmentsTab({ id }: { id: string }) {
                     </div>
                     <div className='text-sm text-gray-600'>{event.appointment.reason}</div>
                     <div className='flex items-center gap-2'>
-                      <Badge variant='secondary'>
-                        {event.appointment.checkedInDate ? 'Checked-in' : 'No check-in'}
-                      </Badge>
+                      <StatusBadge
+                        status={event.appointment.checkedInDate ? 'COMPLETED' : 'SCHEDULED'}
+                      />
                       {event.formCompleted && <Badge variant='outline'>Forms Completed</Badge>}
                       <Badge variant='outline'>{event.appointment.appointmentType}</Badge>
                     </div>
@@ -219,7 +217,7 @@ export function AppointmentsTab({ id }: { id: string }) {
                     </div>
                     <div className='text-sm text-gray-600'>{event.appointment.reason}</div>
                     <div className='flex items-center gap-2'>
-                      <Badge variant='destructive'>Cancelled</Badge>
+                      <StatusBadge status='CANCELLED' />
                       <Badge variant='outline'>{event.appointment.appointmentType}</Badge>
                     </div>
                   </div>

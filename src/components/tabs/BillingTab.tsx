@@ -1,7 +1,6 @@
 import { usePatientCharges } from '@/lib/api/mockData';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { DollarSign, CreditCard, FileText, Calendar, Clock, MapPin } from 'lucide-react';
 import {
@@ -12,6 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useState } from 'react';
+import { StatusBadge } from '@/components/badges';
 
 export function BillingTab({ id }: { id: string }) {
   const { data, isLoading } = usePatientCharges(id);
@@ -97,6 +97,17 @@ export function BillingTab({ id }: { id: string }) {
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>${outstandingBalance.toFixed(2)}</div>
+            <StatusBadge
+              status={
+                recentCharge.status === 'PAID'
+                  ? 'PAID'
+                  : recentCharge.totalOutstanding === 0
+                  ? 'PAID'
+                  : recentCharge.totalOutstanding < recentCharge.total
+                  ? 'PARTIALLY_PAID'
+                  : 'UNPAID'
+              }
+            />
           </CardContent>
         </Card>
 
@@ -109,9 +120,7 @@ export function BillingTab({ id }: { id: string }) {
             <CardContent>
               <div className='text-sm font-medium'>{recentCharge.description}</div>
               <div className='text-2xl font-bold'>${recentCharge.total.toFixed(2)}</div>
-              <Badge variant={recentCharge.status === 'PAID' ? 'default' : 'destructive'}>
-                {recentCharge.status}
-              </Badge>
+              <StatusBadge status={recentCharge.status === 'PAID' ? 'PAID' : 'UNPAID'} />
             </CardContent>
           </Card>
         )}
@@ -152,9 +161,17 @@ export function BillingTab({ id }: { id: string }) {
                   </div>
                   <div className='text-sm text-gray-600'>{charge.description}</div>
                   <div className='flex items-center gap-2'>
-                    <Badge variant={charge.status === 'PAID' ? 'default' : 'destructive'}>
-                      {charge.status}
-                    </Badge>
+                    <StatusBadge
+                      status={
+                        charge.status === 'PAID'
+                          ? 'PAID'
+                          : charge.totalOutstanding === 0
+                          ? 'PAID'
+                          : charge.totalOutstanding < charge.total
+                          ? 'PARTIALLY_PAID'
+                          : 'UNPAID'
+                      }
+                    />
                     {charge.locationName && (
                       <div className='flex items-center gap-1'>
                         <MapPin className='w-4 h-4 text-gray-500' />

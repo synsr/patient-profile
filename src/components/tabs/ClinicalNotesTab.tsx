@@ -1,11 +1,11 @@
 import { usePatientNotes } from '@/lib/api/mockData';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, ChevronUp, Plus, Edit, Sparkles } from 'lucide-react';
+import { ChevronDown, ChevronUp, Plus, Edit } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { AIGeneratedBadge, LatestBadge, VersionBadge } from '@/components/badges';
 
 export function ClinicalNotesTab({ id }: { id: string }) {
   const { data, isLoading, error } = usePatientNotes(id);
@@ -60,18 +60,9 @@ export function ClinicalNotesTab({ id }: { id: string }) {
                           {new Date(note.createdDate).toLocaleDateString()} by{' '}
                           {note.providerNames.join(', ')}
                         </span>
-                        {isLatest && (
-                          <Badge variant='default' className='ml-2'>
-                            Latest
-                          </Badge>
-                        )}
-                        {note.aiGenerated && (
-                          <Badge variant='secondary'>
-                            <Sparkles className='w-3 h-3 mr-1' />
-                            AI-generated
-                          </Badge>
-                        )}
-                        {note.version > 1 && <Badge variant='outline'>v{note.version}</Badge>}
+                        {isLatest && <LatestBadge className='ml-2' />}
+                        {note.aiGenerated && <AIGeneratedBadge />}
+                        {note.version > 1 && <VersionBadge version={note.version} />}
                       </div>
                       <div className='text-sm text-gray-500'>
                         Duration: {note.duration ? `${note.duration / 60} min` : 'N/A'}
