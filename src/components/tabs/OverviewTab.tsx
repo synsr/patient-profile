@@ -28,7 +28,6 @@ import {
   DollarSign,
   CreditCard,
   Bell,
-  Clock,
   MapPin,
 } from 'lucide-react';
 import { getUpcomingAppointments } from '@/lib/utils/appointments';
