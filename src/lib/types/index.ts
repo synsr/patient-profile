@@ -258,3 +258,62 @@ export interface Memo {
   createdDate: string;
   updatedDate: string;
 }
+
+export interface Alert {
+  id: string;
+  type: 'FORM_SUBMITTED' | 'APPOINTMENT_SCHEDULED' | 'MESSAGE_RECEIVED';
+  data: {
+    id?: string;
+    name?: string;
+    title?: string;
+    start?: string;
+    end?: string;
+    message?: string;
+    patient?: {
+      id: string;
+      firstName: string;
+      lastName: string;
+    };
+    organizer?: {
+      id: string;
+      firstName: string;
+      lastName: string;
+    };
+    appointment?: {
+      id: string;
+      reason: string;
+      confirmationStatus: string;
+    };
+  };
+  createdDate: string;
+  actionRequired: boolean;
+  resolvedDate: string | null;
+  tags: Array<{
+    id: string;
+    name: string;
+  }>;
+  assignedProvider: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+  resolvingProvider: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  } | null;
+  patient: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+  };
+}
+
+export interface AlertsResponse {
+  data: Alert[];
+  total: number;
+}

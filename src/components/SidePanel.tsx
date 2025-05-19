@@ -8,16 +8,15 @@ const TABS = [
   { key: 'billing', label: 'Billing' },
   { key: 'memos', label: 'Memos' },
   { key: 'timeline', label: 'Timeline' },
-  { key: 'alerts', label: 'Alerts' },
+  { key: 'notifications', label: 'Notifications' },
 ];
 
 interface SidePanelProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
-  urgentAlert?: React.ReactNode;
 }
 
-export function SidePanel({ activeTab, onTabChange, urgentAlert }: SidePanelProps) {
+export function SidePanel({ activeTab, onTabChange }: SidePanelProps) {
   return (
     <nav
       className='h-full w-60 bg-white border-r border-gray-200 flex flex-col justify-between py-6 px-4 shadow-sm'
@@ -37,12 +36,6 @@ export function SidePanel({ activeTab, onTabChange, urgentAlert }: SidePanelProp
           ))}
         </ul>
       </div>
-      {urgentAlert && (
-        <div className='mt-8 p-4 bg-red-100 rounded-lg shadow flex items-center'>
-          <span className='text-red-700 font-semibold mr-2'>⚠️</span>
-          <span className='text-red-800 text-sm font-medium'>{urgentAlert}</span>
-        </div>
-      )}
     </nav>
   );
 }

@@ -8,16 +8,15 @@ import { AppointmentsTab } from '@/components/tabs/AppointmentsTab';
 import { BillingTab } from '@/components/tabs/BillingTab';
 import { MemosTab } from '@/components/tabs/MemosTab';
 import { TimelineTab } from '@/components/tabs/TimelineTab';
-import { AlertsTab } from '@/components/tabs/AlertsTab';
+import { NotificationsTab } from '@/components/tabs/NotificationsTab';
 
 export function PatientPageClient({ id }: { id: string }) {
   const [activeTab, setActiveTab] = useState('overview');
-  const urgentAlert = 'Allergy: Penicillin';
 
   return (
     <main className='min-h-screen bg-gray-50'>
       <div className='flex max-w-7xl mx-auto py-8'>
-        <SidePanel activeTab={activeTab} onTabChange={setActiveTab} urgentAlert={urgentAlert} />
+        <SidePanel activeTab={activeTab} onTabChange={setActiveTab} />
         <div className='flex-1 pl-8'>
           {activeTab === 'overview' && <OverviewTab id={id} />}
           {activeTab === 'clinical-notes' && <ClinicalNotesTab id={id} />}
@@ -25,7 +24,7 @@ export function PatientPageClient({ id }: { id: string }) {
           {activeTab === 'billing' && <BillingTab id={id} />}
           {activeTab === 'memos' && <MemosTab id={id} />}
           {activeTab === 'timeline' && <TimelineTab id={id} />}
-          {activeTab === 'alerts' && <AlertsTab id={id} />}
+          {activeTab === 'notifications' && <NotificationsTab id={id} />}
         </div>
       </div>
     </main>
