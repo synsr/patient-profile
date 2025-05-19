@@ -23,10 +23,12 @@ export function AIGeneratedBadge({ className }: BaseBadgeProps) {
   );
 }
 
-export function UrgentBadge({ className }: BaseBadgeProps) {
+export function UrgentBadge() {
   return (
-    <Badge variant='destructive' className={cn('gap-1', className)}>
-      <AlertTriangle className='w-3 h-3' />
+    <Badge
+      variant='outline'
+      className='bg-red-50/50 text-red-600 border-red-200 hover:bg-red-100/50 hover:text-red-700'>
+      <AlertTriangle className='w-3 h-3 mr-1' />
       Urgent
     </Badge>
   );

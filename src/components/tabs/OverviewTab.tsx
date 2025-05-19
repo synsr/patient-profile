@@ -31,7 +31,7 @@ import {
   User,
 } from 'lucide-react';
 import { getUpcomingAppointments } from '@/lib/utils/appointments';
-import { AIGeneratedBadge } from '@/components/badges';
+import { AIGeneratedBadge, UrgentBadge } from '@/components/badges';
 
 export function OverviewTab({ id }: { id: string }) {
   const { data, isLoading, error } = usePatientData(id);
@@ -300,14 +300,14 @@ export function OverviewTab({ id }: { id: string }) {
                   <div
                     className={`p-4 ${
                       latestAlert.tags.some((tag) => tag.name === 'Urgent')
-                        ? 'bg-red-50 border-red-200'
+                        ? 'bg-white border-red-200'
                         : 'bg-yellow-50 border-yellow-200'
                     } border rounded-lg`}>
                     <div className='flex items-start gap-3'>
                       <AlertTriangle
                         className={`w-5 h-5 ${
                           latestAlert.tags.some((tag) => tag.name === 'Urgent')
-                            ? 'text-red-600'
+                            ? 'text-red-400'
                             : 'text-yellow-600'
                         } mt-0.5`}
                       />
@@ -316,7 +316,7 @@ export function OverviewTab({ id }: { id: string }) {
                           <span
                             className={`text-sm font-medium ${
                               latestAlert.tags.some((tag) => tag.name === 'Urgent')
-                                ? 'text-red-800'
+                                ? 'text-gray-800'
                                 : 'text-yellow-800'
                             }`}>
                             {latestAlert.type === 'MESSAGE_RECEIVED'
@@ -325,9 +325,7 @@ export function OverviewTab({ id }: { id: string }) {
                               ? 'Form Submitted'
                               : 'Appointment Scheduled'}
                           </span>
-                          {latestAlert.tags.some((tag) => tag.name === 'Urgent') && (
-                            <Badge variant='destructive'>Urgent</Badge>
-                          )}
+                          {latestAlert.tags.some((tag) => tag.name === 'Urgent') && <UrgentBadge />}
                           {latestAlert.actionRequired &&
                             !latestAlert.tags.some((tag) => tag.name === 'Urgent') && (
                               <Badge variant='secondary'>Action Required</Badge>
@@ -336,7 +334,7 @@ export function OverviewTab({ id }: { id: string }) {
                         <p
                           className={`text-sm ${
                             latestAlert.tags.some((tag) => tag.name === 'Urgent')
-                              ? 'text-red-700'
+                              ? 'text-gray-700'
                               : 'text-yellow-700'
                           } mt-1`}>
                           {latestAlert.type === 'MESSAGE_RECEIVED'
@@ -348,7 +346,7 @@ export function OverviewTab({ id }: { id: string }) {
                         <div
                           className={`text-xs ${
                             latestAlert.tags.some((tag) => tag.name === 'Urgent')
-                              ? 'text-red-600'
+                              ? 'text-gray-500'
                               : 'text-yellow-600'
                           } mt-2`}>
                           {new Date(latestAlert.createdDate).toLocaleDateString()}

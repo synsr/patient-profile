@@ -18,15 +18,11 @@ function NotificationCard({ notification }: { notification: Alert }) {
   const hasActionRequired = notification.actionRequired && !notification.resolvedDate;
 
   return (
-    <Card className={isUrgent ? 'border-red-500' : ''}>
+    <Card>
       <CardContent className='p-4'>
         <div className='flex items-start gap-4'>
-          <div className={`rounded-full p-2 ${isUrgent ? 'bg-red-100' : 'bg-primary/10'}`}>
-            {isUrgent ? (
-              <AlertTriangle className='h-5 w-5 text-red-500' />
-            ) : (
-              <Icon className='h-5 w-5 text-primary' />
-            )}
+          <div className='rounded-full p-2 bg-primary/10'>
+            <Icon className='h-5 w-5 text-primary' />
           </div>
           <div className='flex-1 space-y-2'>
             <div className='flex items-center justify-between'>
@@ -64,7 +60,7 @@ function NotificationCard({ notification }: { notification: Alert }) {
             </div>
             {hasActionRequired && (
               <div className='flex gap-2'>
-                <Button size='sm' variant={isUrgent ? 'destructive' : 'default'}>
+                <Button size='sm' variant='default'>
                   Resolve
                 </Button>
                 <Button size='sm' variant='outline'>
@@ -119,10 +115,17 @@ export function NotificationsTab({ id }: { id: string }) {
     <div className='space-y-6'>
       {urgentNotifications.length > 0 && (
         <div className='space-y-4'>
-          <h3 className='text-lg font-semibold text-red-500'>Urgent Notifications</h3>
-          {urgentNotifications.map((notification) => (
-            <NotificationCard key={notification.id} notification={notification} />
-          ))}
+          <div className='space-y-2'>
+            <div className='flex items-center gap-2 text-sm font-medium text-red-600'>
+              <AlertTriangle className='w-4 h-4' />
+              Urgent Notifications
+            </div>
+            <div className='space-y-2'>
+              {urgentNotifications.map((notification) => (
+                <NotificationCard key={notification.id} notification={notification} />
+              ))}
+            </div>
+          </div>
         </div>
       )}
 
