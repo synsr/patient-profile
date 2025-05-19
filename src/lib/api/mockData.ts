@@ -3,6 +3,7 @@ import eventsData from './mock/events.json';
 import doctorsNotesData from './mock/doctors_notes.json';
 import chargesData from './mock/charges.json';
 import paymentMethodsData from './mock/payment_methods.json';
+import memosData from './mock/memos.json';
 import type {
   Patient,
   Event,
@@ -12,6 +13,7 @@ import type {
   DoctorsNote,
   Charge,
   PaymentMethod,
+  Memo,
 } from '../types';
 import { useQuery } from '@tanstack/react-query';
 
@@ -70,6 +72,11 @@ export const getPatientPaymentMethods = async (id: string): Promise<PaymentMetho
   return (paymentMethodsData as PaymentMethod[]).filter((method) => method.patientId === id);
 };
 
+export const getPatientMemos = async (id: string): Promise<Memo[]> => {
+  await delay(500);
+  return (memosData as Memo[]).filter((memo) => memo.patient.id === id);
+};
+
 export function usePatientData(id: string) {
   return useQuery({
     queryKey: ['patient-data', id],
@@ -111,5 +118,12 @@ export function usePatientCharges(id: string) {
         paymentMethods,
       };
     },
+  });
+}
+
+export function usePatientMemos(id: string) {
+  return useQuery({
+    queryKey: ['patient-memos', id],
+    queryFn: () => getPatientMemos(id),
   });
 }

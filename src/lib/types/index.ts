@@ -238,3 +238,23 @@ export interface ChargesResponse {
   data: Charge[];
   total: number;
 }
+
+export interface Memo {
+  id: string;
+  patient: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+  };
+  note: string;
+  creator: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+  createdDate: string;
+  updatedDate: string;
+}
