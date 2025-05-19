@@ -3,25 +3,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { DollarSign, CreditCard, FileText, Calendar, Clock, MapPin } from 'lucide-react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { useState } from 'react';
 import { StatusBadge } from '@/components/badges';
 
 export function BillingTab({ id }: { id: string }) {
   const { data, isLoading } = usePatientCharges(id);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('');
 
   if (isLoading) return <Skeleton className='h-96 w-full' />;
   if (!data) return null;
 
   const charges = data.data;
-  const paymentMethods = data.paymentMethods;
   const outstandingBalance = charges.reduce((sum, charge) => sum + charge.totalOutstanding, 0);
   const recentCharge = charges.sort(
     (a, b) => new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime()
@@ -33,10 +23,6 @@ export function BillingTab({ id }: { id: string }) {
     .sort((a, b) => new Date(a.paymentDate).getTime() - new Date(b.paymentDate).getTime())[0];
 
   const handleChargePatient = () => {
-    if (!selectedPaymentMethod) {
-      // TODO: Show error message
-      return;
-    }
     // TODO: Implement charge patient functionality
   };
 
@@ -44,38 +30,6 @@ export function BillingTab({ id }: { id: string }) {
     <div className='space-y-8'>
       {/* Actions Section */}
       <div className='flex gap-4'>
-        <div className='flex gap-2'>
-          <Select value={selectedPaymentMethod} onValueChange={setSelectedPaymentMethod}>
-            <SelectTrigger className='w-[200px]'>
-              <SelectValue placeholder='Select payment method' />
-            </SelectTrigger>
-            <SelectContent>
-              {paymentMethods.map((method) => (
-                <SelectItem key={method.id} value={method.id}>
-                  {method.type === 'CARD' ? (
-                    <div className='flex items-center gap-2'>
-                      <CreditCard className='w-4 h-4' />
-                      <span>
-                        {method.brand} ending in {method.last4}
-                      </span>
-                    </div>
-                  ) : (
-                    <div className='flex items-center gap-2'>
-                      <FileText className='w-4 h-4' />
-                      <span>
-                        {method.bankName} ending in {method.accountNumberLast4}
-                      </span>
-                    </div>
-                  )}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button onClick={handleChargePatient} disabled={!selectedPaymentMethod}>
-            <DollarSign className='w-4 h-4 mr-2' />
-            Charge Patient
-          </Button>
-        </div>
         <Button variant='outline'>
           <FileText className='w-4 h-4 mr-2' />
           Generate Statement
@@ -96,18 +50,26 @@ export function BillingTab({ id }: { id: string }) {
             <DollarSign className='h-4 w-4 text-muted-foreground' />
           </CardHeader>
           <CardContent>
-            <div className='text-2xl font-bold'>${outstandingBalance.toFixed(2)}</div>
-            <StatusBadge
-              status={
-                recentCharge.status === 'PAID'
-                  ? 'PAID'
-                  : recentCharge.totalOutstanding === 0
-                  ? 'PAID'
-                  : recentCharge.totalOutstanding < recentCharge.total
-                  ? 'PARTIALLY_PAID'
-                  : 'UNPAID'
-              }
-            />
+            <div className='flex items-center justify-between'>
+              <div>
+                <div className='text-2xl font-bold'>${outstandingBalance.toFixed(2)}</div>
+                <StatusBadge
+                  status={
+                    recentCharge.status === 'PAID'
+                      ? 'PAID'
+                      : recentCharge.totalOutstanding === 0
+                      ? 'PAID'
+                      : recentCharge.totalOutstanding < recentCharge.total
+                      ? 'PARTIALLY_PAID'
+                      : 'UNPAID'
+                  }
+                />
+              </div>
+              <Button onClick={handleChargePatient}>
+                <DollarSign className='w-4 h-4 mr-2' />
+                Pay Now
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
