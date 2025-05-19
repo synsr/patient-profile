@@ -15,8 +15,10 @@ export function PatientPageClient({ id }: { id: string }) {
 
   return (
     <main className='min-h-screen bg-gray-50'>
-      <div className='flex max-w-7xl mx-auto py-8'>
-        <SidePanel activeTab={activeTab} onTabChange={setActiveTab} />
+      <div className='flex max-w-7xl mx-auto py-8 relative'>
+        <div className='w-60 shrink-0'>
+          <SidePanel activeTab={activeTab} onTabChange={setActiveTab} />
+        </div>
         <div className='flex-1 pl-8'>
           {activeTab === 'overview' && <OverviewTab id={id} />}
           {activeTab === 'clinical-notes' && <ClinicalNotesTab id={id} />}

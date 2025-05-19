@@ -19,9 +19,9 @@ interface SidePanelProps {
 export function SidePanel({ activeTab, onTabChange }: SidePanelProps) {
   return (
     <nav
-      className='h-full w-60 bg-white border-r border-gray-200 flex flex-col justify-between py-6 px-4 shadow-sm'
+      className='sticky top-8 bg-white border border-gray-200 rounded-lg shadow-sm'
       aria-label='Sidebar'>
-      <div>
+      <div className='p-4'>
         <ul className='space-y-1'>
           {TABS.map((tab) => (
             <li key={tab.key}>

@@ -1,10 +1,10 @@
 import { usePatientAlerts } from '@/lib/api/mockData';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { FileText, Calendar, MessageSquare, AlertTriangle } from 'lucide-react';
 import type { Alert } from '@/lib/types';
+import { UrgentBadge, ActionRequiredBadge } from '@/components/badges';
 
 const NOTIFICATION_ICONS = {
   FORM_SUBMITTED: FileText,
@@ -15,6 +15,7 @@ const NOTIFICATION_ICONS = {
 function NotificationCard({ notification }: { notification: Alert }) {
   const Icon = NOTIFICATION_ICONS[notification.type];
   const isUrgent = notification.tags.some((tag) => tag.name === 'Urgent');
+  const hasActionRequired = notification.actionRequired && !notification.resolvedDate;
 
   return (
     <Card className={isUrgent ? 'border-red-500' : ''}>
@@ -40,11 +41,9 @@ function NotificationCard({ notification }: { notification: Alert }) {
                   {new Date(notification.createdDate).toLocaleString()}
                 </p>
               </div>
-              {notification.actionRequired && !notification.resolvedDate && (
-                <Badge variant={isUrgent ? 'destructive' : 'default'}>
-                  {isUrgent ? 'Urgent Action Required' : 'Action Required'}
-                </Badge>
-              )}
+              <div className='flex flex-wrap gap-2'>
+                {isUrgent ? <UrgentBadge /> : hasActionRequired ? <ActionRequiredBadge /> : null}
+              </div>
             </div>
             <div className='text-sm'>
               {notification.type === 'FORM_SUBMITTED' && (
@@ -63,14 +62,7 @@ function NotificationCard({ notification }: { notification: Alert }) {
                 <p className='line-clamp-2'>{notification.data.message}</p>
               )}
             </div>
-            <div className='flex flex-wrap gap-2'>
-              {notification.tags.map((tag) => (
-                <Badge key={tag.id} variant={tag.name === 'Urgent' ? 'destructive' : 'secondary'}>
-                  {tag.name}
-                </Badge>
-              ))}
-            </div>
-            {notification.actionRequired && !notification.resolvedDate && (
+            {hasActionRequired && (
               <div className='flex gap-2'>
                 <Button size='sm' variant={isUrgent ? 'destructive' : 'default'}>
                   Resolve
