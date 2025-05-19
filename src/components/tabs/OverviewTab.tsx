@@ -234,11 +234,9 @@ export function OverviewTab({ id }: { id: string }) {
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-lg font-semibold'>Next Appointment</CardTitle>
-              <Button variant='ghost' size='sm' asChild>
-                <a href={`/appointments?patientId=${id}`}>
-                  <Calendar className='w-4 h-4 mr-2' />
-                  View All
-                </a>
+              <Button variant='ghost' size='sm'>
+                <Calendar className='w-4 h-4 mr-2' />
+                View All
               </Button>
             </CardHeader>
             <CardContent>
@@ -272,17 +270,11 @@ export function OverviewTab({ id }: { id: string }) {
                       </div>
                     </div>
                     <div className='flex flex-col gap-2'>
-                      <Button variant='outline' size='sm' asChild>
-                        <a
-                          href={`/appointments?patientId=${id}&action=reschedule&appointmentId=${nextAppointment.id}`}>
-                          Reschedule
-                        </a>
+                      <Button variant='outline' size='sm'>
+                        Reschedule
                       </Button>
-                      <Button variant='outline' size='sm' asChild>
-                        <a
-                          href={`/appointments?patientId=${id}&action=cancel&appointmentId=${nextAppointment.id}`}>
-                          Cancel
-                        </a>
+                      <Button variant='outline' size='sm'>
+                        Cancel
                       </Button>
                     </div>
                   </div>
